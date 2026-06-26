@@ -3,10 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TWBSO</title>
+<title>𝕋𝕎𝔹𝕊𝕆</title>
 <link rel="icon" type="image/png" href="logo.png">
 
 <style>
+    .center-img{
+        display: block;
+        margin:20px auto;
+    }
 *{
     margin:0;
     padding:0;
@@ -45,11 +49,27 @@ header p{
 }
 
 @keyframes rgbGlow{
-    0%{border-color:rgb(209, 14, 14);}
+    0%{border-color:rgb(226, 187, 15);}
+    25%{border-color:rgb(226, 226, 238);}
+    50%{border-color:rgb(219, 188, 10);}
+    75%{border-color:rgb(223, 223, 216);}
+    85%{border-color:rgb(231, 191, 14);}
+    100%{border: #3609b1;}
+}
+.rgb-border{
+    display:block;
+    margin:20px auto;
+    border:5px solid red;
+    border-radius:15px;
+    animation: rgbGlow 3s infinite linear;
+}
+
+@keyframes rgbGlow{
+    0%{border-color:red;}
     25%{border-color:blue;}
-    50%{border-color:green;}
+    50%{border-color:lime;}
     75%{border-color:yellow;}
-    100%{border-color:rgb(0, 0, 0);}
+    100%{border-color:red;}
 }
 
 /* CONTAINER */
@@ -111,12 +131,15 @@ footer{
 <body>
 
 <header>
-    <h1>🤛Welcome to TWBSO🤜</h1>
+    <h1>▂▃▅▇█ Welcome to TWBSO █▇▅▃▂</h1>
     <p>Aesthetic theme</p>
 </header>
 
 <!-- IMAGE -->
 <img src="car.png" alt="Car" class="rgb-border">
+<img src="car2.png" alt="car2" width="400" class="center-img rgb-border">
+<img src="car3.png" alt="car3" width="400" class="center-img rgb-border">
+<img src="car4.png" alt="car3" width="400"class="center-img rgb-border">
 
 <div class="container">
 
@@ -150,8 +173,9 @@ footer{
 <script>
 function showMessage(){
     document.getElementById("message").innerHTML =
-    "🔥 Keep Learning, Trust Allah & Work Hard!";
+    "_-_-_-_-_-_-_-_-_-_-_-_-_-_-";
 }
+
 </script>
 
 </body>
