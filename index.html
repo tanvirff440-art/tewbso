@@ -919,10 +919,12 @@ function openWaveGame(){
     // 🔥 auto fit like puzzle system
     setTimeout(() => {
 
-        waveCanvas.width = waveCanvas.clientWidth;
-        waveCanvas.height = waveCanvas.clientHeight;
-        anchor.x = waveCanvas.width / 2;
-        anchor.y = 70;
+        const dpr = window.devicePixelRatio || 1;
+
+waveCanvas.width = waveCanvas.clientWidth * dpr;
+waveCanvas.height = waveCanvas.clientHeight * dpr;
+
+waveCtx.scale(dpr, dpr);
 
         resetWave();
         renderWave();
@@ -952,8 +954,14 @@ waveCanvas.onpointermove = function(e){
 
     let end = rope[rope.length - 1];
 
-    end.x = e.clientX - rect.left;
-    end.y = e.clientY - rect.top;
+    let scaleX = waveCanvas.width / rect.width;
+let scaleY = waveCanvas.height / rect.height;
+
+end.oldX = end.x;
+end.oldY = end.y;
+
+end.x = (e.clientX - rect.left) * scaleX;
+end.y = (e.clientY - rect.top) * scaleY;
 
 };
 
