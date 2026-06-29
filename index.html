@@ -414,7 +414,7 @@ header p{
 📷 Show Images
 </button>
 <button class="show-btn" onclick="openWaveGame()" id="waveBtn">
-🌈 RGB Wave Game
+Time pass no.1
 </button>
 <div id="gallery" style="display:none;">
 <img src="car.png" class="center-img rgb-border" onclick="selectImage('car.png')">
@@ -482,7 +482,7 @@ style="position:absolute;top:20px;left:20px;">
 text-align:center;
 color:white;
 margin-top:80px;">
-🌈 RGB Wave Game
+Time pass no.1
 </h1>
 <canvas id="waveCanvas"></canvas>
 </div>
@@ -782,140 +782,133 @@ function resetWave(){
 
 }
 function renderWave(){
-    for(let i = 0; i < rope.length; i++){
+
+    // Ball trail
+    let end = rope[rope.length - 1];
 
     trails.push({
-        x: rope[i].x,
-        y: rope[i].y,
+        x: end.x,
+        y: end.y,
         life: 1
     });
 
-}
-if(trails.length > 40){
-    trails.shift();
-}
+    if(trails.length > 40){
+        trails.shift();
+    }
 
     waveCtx.clearRect(0,0,waveCanvas.width,waveCanvas.height);
-    for(let i = 0; i < trails.length; i++){
 
-    let t = trails[i];
+    // Draw Trail
+    for(let i=0;i<trails.length;i++){
 
-    t.life -= 0.025;
+        let t = trails[i];
 
-    if(t.life <= 0){
-        trails.splice(i,1);
-        i--;
-        continue;
-    }
-waveCtx.shadowBlur = 20;
-waveCtx.shadowColor = `hsl(${i*12},100%,50%)`;
-    waveCtx.beginPath();
+        t.life -= 0.05;
 
-    waveCtx.fillStyle =
-        `hsla(${i*12},100%,50%,${t.life})`;
-
-    waveCtx.arc(t.x, t.y, 8*t.life, 0, Math.PI*2);
-
-    waveCtx.fill();
-    waveCtx.shadowBlur = 0;
-waveCtx.shadowColor = "transparent";
-}
-    // Rope Physics
-for(let i = 1; i < rope.length; i++){
-
-    let p = rope[i];
-
-    let vx = p.x - p.oldX;
-    let vy = p.y - p.oldY;
-
-    p.oldX = p.x;
-    p.oldY = p.y;
-
-    p.x += vx;
-    p.y += vy;
-
-    p.y += 0.35; // Gravity
-}
-
-// Rope Constraints
-for(let k = 0; k < 8; k++){
-
-    rope[0].x = anchor.x;
-    rope[0].y = anchor.y;
-
-    for(let i = 1; i < rope.length; i++){
-
-        let p1 = rope[i-1];
-        let p2 = rope[i];
-
-        let dx = p2.x - p1.x;
-        let dy = p2.y - p1.y;
-
-        let dist = Math.sqrt(dx*dx + dy*dy);
-
-        if(dist === 0) continue;
-
-        let diff = (dist - SEGMENT_LENGTH) / dist;
-
-        if(i != 1){
-            p1.x += dx * 0.5 * diff;
-            p1.y += dy * 0.5 * diff;
+        if(t.life <= 0){
+            trails.splice(i,1);
+            i--;
+            continue;
         }
 
-        p2.x -= dx * 0.5 * diff;
-        p2.y -= dy * 0.5 * diff;
+        waveCtx.beginPath();
+        waveCtx.fillStyle = `hsla(${i*9},100%,50%,${t.life})`;
+        waveCtx.arc(t.x,t.y,8*t.life,0,Math.PI*2);
+        waveCtx.fill();
     }
-}
 
-    
-
-    waveCtx.beginPath();
-    waveCtx.moveTo(rope[0].x, rope[0].y);
-
+    // Rope Physics
     for(let i=1;i<rope.length;i++){
 
-        waveCtx.lineTo(rope[i].x, rope[i].y);
+        let p = rope[i];
 
+        let vx = p.x - p.oldX;
+        let vy = p.y - p.oldY;
+
+        p.oldX = p.x;
+        p.oldY = p.y;
+
+        p.x += vx;
+        p.y += vy;
+
+        p.y += 0.35;
     }
-let hue = (Date.now() / 15) % 360;
 
-waveCtx.lineWidth = 6;
-waveCtx.lineCap = "round";
-waveCtx.lineJoin = "round";
+    // Rope Constraints
+    for(let k=0;k<8;k++){
 
-waveCtx.shadowBlur = 35;
-waveCtx.shadowColor = `hsl(${hue},100%,50%)`;
+        rope[0].x = anchor.x;
+        rope[0].y = anchor.y;
 
-waveCtx.strokeStyle = `hsl(${hue},100%,50%)`;
-waveCtx.stroke();
+        for(let i=1;i<rope.length;i++){
 
+            let p1 = rope[i-1];
+            let p2 = rope[i];
+
+            let dx = p2.x - p1.x;
+            let dy = p2.y - p1.y;
+
+            let dist = Math.sqrt(dx*dx + dy*dy);
+
+            if(dist===0) continue;
+
+            let diff = (dist-SEGMENT_LENGTH)/dist;
+
+            if(i!=1){
+                p1.x += dx*0.5*diff;
+                p1.y += dy*0.5*diff;
+            }
+
+            p2.x -= dx*0.5*diff;
+            p2.y -= dy*0.5*diff;
+        }
+    }
+
+    // Rope Draw
+    let hue = (Date.now()/15)%360;
+
+    waveCtx.beginPath();
+    waveCtx.moveTo(rope[0].x,rope[0].y);
+
+    for(let i=1;i<rope.length;i++){
+        waveCtx.lineTo(rope[i].x,rope[i].y);
+    }
+
+    waveCtx.lineWidth = 6;
+    waveCtx.lineCap = "round";
+    waveCtx.lineJoin = "round";
+    waveCtx.shadowBlur = 35;
+    waveCtx.shadowColor = `hsl(${hue},100%,50%)`;
+    waveCtx.strokeStyle = `hsl(${hue},100%,50%)`;
+    waveCtx.stroke();
+
+    // Anchor
+    waveCtx.shadowBlur = 0;
     waveCtx.fillStyle = "white";
     waveCtx.beginPath();
     waveCtx.arc(anchor.x,anchor.y,6,0,Math.PI*2);
     waveCtx.fill();
 
-    let end = rope[rope.length-1];
+    // Ball
+    end = rope[rope.length-1];
 
     waveCtx.shadowBlur = 30;
-waveCtx.shadowColor = "cyan";
+    waveCtx.shadowColor = "cyan";
+    waveCtx.fillStyle = "cyan";
 
-waveCtx.fillStyle = "cyan";
-waveCtx.beginPath();
-waveCtx.arc(end.x, end.y, 16, 0, Math.PI * 2);
-waveCtx.fill();
-waveCtx.beginPath();
-waveCtx.fillStyle = "rgba(0,255,255,0.15)";
-waveCtx.arc(end.x, end.y, 45, 0, Math.PI * 2);
-waveCtx.fill();
+    waveCtx.beginPath();
+    waveCtx.arc(end.x,end.y,16,0,Math.PI*2);
+    waveCtx.fill();
 
-waveCtx.shadowBlur = 0;
-waveCtx.shadowColor = "transparent";
+    waveCtx.beginPath();
+    waveCtx.fillStyle = "rgba(0,255,255,0.15)";
+    waveCtx.arc(end.x,end.y,45,0,Math.PI*2);
+    waveCtx.fill();
 
-requestAnimationFrame(renderWave);
+    waveCtx.shadowBlur = 0;
 
-
+    requestAnimationFrame(renderWave);
 }
-
 function openWaveGame(){
 
     document.getElementById("waveGame").style.display = "block";
