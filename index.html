@@ -765,6 +765,11 @@ let anchor = {
 function resetWave(){
 
     rope = [];
+    trails = [];
+
+    // Canvas-এর মাঝখানে Anchor
+    anchor.x = waveCanvas.clientWidth / 2;
+    anchor.y = 70;
 
     for(let i = 0; i < SEGMENTS; i++){
 
@@ -916,68 +921,62 @@ function openWaveGame(){
     waveCanvas = document.getElementById("waveCanvas");
     waveCtx = waveCanvas.getContext("2d");
 
-    // 🔥 auto fit like puzzle system
     setTimeout(() => {
 
-        const dpr = window.devicePixelRatio || 1;
+        // Canvas size
+        waveCanvas.width = waveCanvas.clientWidth;
+        waveCanvas.height = waveCanvas.clientHeight;
 
-waveCanvas.width = waveCanvas.clientWidth * dpr;
-waveCanvas.height = waveCanvas.clientHeight * dpr;
-
-waveCtx.scale(dpr, dpr);
-
+        // Reset rope
         resetWave();
+
+        // Start animation
         renderWave();
+
         waveCanvas.onpointerdown = function(e){
 
-    let rect = waveCanvas.getBoundingClientRect();
+            let rect = waveCanvas.getBoundingClientRect();
 
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
 
-    let end = rope[rope.length - 1];
+            let end = rope[rope.length - 1];
 
-    let dx = x - end.x;
-    let dy = y - end.y;
+            let dx = x - end.x;
+            let dy = y - end.y;
 
-    if(Math.sqrt(dx*dx + dy*dy) < 25){
-        dragging = true;
-    }
+            if(Math.sqrt(dx*dx + dy*dy) < 30){
+                dragging = true;
+            }
 
-};
+        };
 
-waveCanvas.onpointermove = function(e){
+        waveCanvas.onpointermove = function(e){
 
-    if(!dragging) return;
+            if(!dragging) return;
 
-    let rect = waveCanvas.getBoundingClientRect();
+            let rect = waveCanvas.getBoundingClientRect();
 
-    let end = rope[rope.length - 1];
+            let end = rope[rope.length - 1];
 
-    let scaleX = waveCanvas.width / rect.width;
-let scaleY = waveCanvas.height / rect.height;
+            end.oldX = end.x;
+            end.oldY = end.y;
 
-end.oldX = end.x;
-end.oldY = end.y;
+            end.x = e.clientX - rect.left;
+            end.y = e.clientY - rect.top;
 
-end.x = (e.clientX - rect.left) * scaleX;
-end.y = (e.clientY - rect.top) * scaleY;
+        };
 
-};
+        waveCanvas.onpointerup = function(){
+            dragging = false;
+        };
 
-waveCanvas.onpointerup = function(){
+        waveCanvas.onpointerleave = function(){
+            dragging = false;
+        };
 
-    dragging = false;
+    },50);
 
-};
-
-waveCanvas.onpointerleave = function(){
-
-    dragging = false;
-
-};
-
-    }, 50);
 }
 function closeWaveGame(){
     document.getElementById("waveGame").style.display = "none";
