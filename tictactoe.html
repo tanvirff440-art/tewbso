@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tic Tac Toe</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+
+background:linear-gradient(135deg,#00ff4c,#b10909);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+height:100vh;
+
+}
+
+#menu{
+
+text-align:center;
+
+}
+
+h1{
+
+color:white;
+
+font-size:45px;
+
+margin-bottom:40px;
+
+}
+
+.show-btn{
+
+display:block;
+
+width:280px;
+
+margin:15px auto;
+
+padding:15px;
+
+font-size:20px;
+
+font-weight:bold;
+
+color:white;
+
+border:none;
+
+border-radius:50px;
+
+cursor:pointer;
+
+background:linear-gradient(45deg,#ff0000,#00ff00,#0000ff);
+
+background-size:300%;
+
+animation:rgbButton 4s linear infinite;
+
+}
+
+@keyframes rgbButton{
+
+0%{
+background-position:0%;
+}
+
+100%{
+background-position:300%;
+}
+
+}
+
+
+#board{
+
+width:min(90vw,330px);
+
+margin:20px auto;
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:8px;
+
+}
+.cell{
+
+width:100%;
+
+aspect-ratio:1/1;
+
+background:white;
+
+border-radius:15px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:50px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+color:black;
+
+transition:.2s;
+
+}
+
+.cell:hover{
+
+transform:scale(1.05);
+
+}
+
+
+
+
+@media(max-width:768px){
+
+#board{
+
+width:90vw;
+
+max-width:330px;
+
+}
+
+.cell{
+
+font-size:13vw;
+
+}
+
+h1{
+
+font-size:34px;
+
+}
+
+.show-btn{
+
+width:90%;
+
+max-width:320px;
+
+}
+
+}
+
+body{
+    transition:background .5s ease;
+}
+
+.turn-x{
+    background:linear-gradient(135deg,#ff4d4d,#8b0000);
+}
+
+.turn-o{
+    background:linear-gradient(135deg,#4da6ff,#001f80);
+}
+
+#status{
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+    transition:.4s;
+}
+
+.turn-left{
+    transform:translateX(-120px);
+    text-shadow:0 0 15px red;
+}
+
+.turn-right{
+    transform:translateX(120px);
+    text-shadow:0 0 15px cyan;
+}
+
+
+.flash-red{
+
+animation:redFlash .25s;
+
+}
+
+.flash-blue{
+
+animation:blueFlash .25s;
+
+}
+
+@keyframes redFlash{
+
+0%{
+
+box-shadow:inset 0 0 0 0 rgba(255,0,0,.9);
+
+}
+
+50%{
+
+box-shadow:inset 0 0 200px 100px rgba(255,0,0,.45);
+
+}
+
+100%{
+
+box-shadow:inset 0 0 0 0 rgba(255,0,0,0);
+
+}
+
+}
+
+@keyframes blueFlash{
+
+0%{
+
+box-shadow:inset 0 0 0 0 rgba(0,120,255,.9);
+
+}
+
+50%{
+
+box-shadow:inset 0 0 200px 100px rgba(0,120,255,.45);
+
+}
+
+100%{
+
+box-shadow:inset 0 0 0 0 rgba(0,120,255,0);
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="menu">
+
+<h1>⭕ Tic Tac Toe ❌</h1>
+
+<button class="show-btn" onclick="startGame('pvp')">
+👥 Player vs Player
+</button>
+
+<button class="show-btn" onclick="startGame('ai')">
+🤖 Player vs AI
+</button>
+
+
+<button class="show-btn"
+onclick="location.href='index.html'">
+⬅ Back
+</button>
+
+</div>
+
+
+<div id="game" style="display:none; text-align:center;">
+
+<h2 id="status" style="color:white; margin-bottom:20px;">
+Player X Turn
+</h2>
+
+<div id="board">
+
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+
+</div>
+
+<button class="show-btn" onclick="backMenu()">
+⬅ Back
+</button>
+
+</div>
+
+
+</body>
+
+
+
+
+<script>
+
+function backMenu(){
+
+    document.getElementById("game").style.display = "none";
+
+    document.getElementById("menu").style.display = "block";
+
+    gameOver = false;
+
+    currentPlayer = "X";
+
+}
+
+function startGame(mode){
+
+    gameMode = mode;
+
+    currentPlayer = "X";
+
+    gameOver = false;
+
+    document.body.className = "turn-x";
+
+let status = document.getElementById("status");
+
+status.className = "turn-left";
+
+    document.getElementById("status").innerHTML =
+    "Player X Turn";
+
+    document.getElementById("menu").style.display = "none";
+
+    document.getElementById("game").style.display = "block";
+
+    let cells = document.querySelectorAll(".cell");
+
+    cells.forEach(cell=>{
+
+    cell.innerHTML="";
+
+    cell.style.background="white";
+
+    cell.style.color="black";
+
+    cell.onclick=handleClick;
+
+});
+
+}
+
+let currentPlayer = "X";
+let gameMode = "";
+let gameOver = false;
+
+
+function handleClick(){
+
+    if(gameOver) return;
+
+    if(this.innerHTML!="") return;
+
+    this.innerHTML=currentPlayer;
+let winner=checkWinner();
+
+if(winner){
+
+gameOver=true;
+
+winner.forEach(i=>{
+
+document.querySelectorAll(".cell")[i].style.background="gold";
+
+document.querySelectorAll(".cell")[i].style.color="black";
+
+});
+
+document.getElementById("status").innerHTML=
+"🏆 Player "+currentPlayer+" Wins!";
+
+return;
+
+}
+
+if(checkDraw()){
+
+    gameOver = true;
+
+    document.getElementById("status").innerHTML =
+    "🤝 Match Draw!";
+
+    setTimeout(function(){
+
+        startGame(gameMode);
+
+    },2000);
+
+    return;
+
+}
+    if(currentPlayer=="X"){
+
+    this.style.color="red";
+
+    currentPlayer="O";
+flashScreen("flash-blue");
+    document.getElementById("status").innerHTML =
+    "🔵 Player O Turn";
+
+    document.body.className = "turn-o";
+
+    document.getElementById("status").className =
+    "turn-right";
+
+}else{
+
+    this.style.color="blue";
+
+    currentPlayer="X";
+flashScreen("flash-red");
+    document.getElementById("status").innerHTML =
+    "🔴 Player X Turn";
+
+    document.body.className = "turn-x";
+
+    document.getElementById("status").className =
+    "turn-left";
+
+}
+
+}
+
+function flashScreen(color){
+
+document.body.classList.remove("flash-red");
+document.body.classList.remove("flash-blue");
+
+void document.body.offsetWidth;
+
+document.body.classList.add(color);
+
+setTimeout(()=>{
+
+document.body.classList.remove(color);
+
+},250);
+
+}
+
+function checkWinner(){
+
+const cells=document.querySelectorAll(".cell");
+
+const win=[
+[0,1,2],
+[3,4,5],
+[6,7,8],
+[0,3,6],
+[1,4,7],
+[2,5,8],
+[0,4,8],
+[2,4,6]
+];
+
+for(let c of win){
+
+let a=c[0];
+let b=c[1];
+let d=c[2];
+
+if(
+cells[a].innerHTML!=""&&
+cells[a].innerHTML==cells[b].innerHTML&&
+cells[a].innerHTML==cells[d].innerHTML
+){
+
+return c;
+
+}
+
+}
+
+return null;
+
+}
+
+function checkDraw(){
+
+let cells=document.querySelectorAll(".cell");
+
+for(let cell of cells){
+
+    if(cell.innerHTML==""){
+
+        return false;
+
+    }
+
+}
+
+return true;
+
+}
+
+</script>
+
+</html>
